@@ -1,5 +1,5 @@
 // Vercel Serverless Function
-// 브라우저 → 이 서버 → OpenAI ephemeral token 발급 → 브라우저에 전달
+// POST /v1/realtime/client_secrets — GA 버전 ephemeral token 발급
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   if (!apiKey) return res.status(500).json({ error: 'API 키 없음' });
 
   try {
-    const response = await fetch('https://api.openai.com/v1/realtime/sessions', {
+    const response = await fetch('https://api.openai.com/v1/realtime/client_secrets', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
         voice: 'alloy',
         modalities: ['audio', 'text'],
         instructions: req.body?.instructions || '응급실 간호사 AI 비서입니다.',
-        input_audio_transcription: { model: 'gpt-4o-transcribe' },
+        input_audio_transcription: { model: 'whisper-1' },
         turn_detection: {
           type: 'server_vad',
           threshold: 0.5,
