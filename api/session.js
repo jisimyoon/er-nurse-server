@@ -1,11 +1,7 @@
-// Vercel Serverless Function
-// POST /v1/realtime/client_secrets — GA 버전 ephemeral token 발급
-
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const apiKey = process.env.OPENAI_API_KEY;
@@ -19,7 +15,6 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-realtime-preview',
         voice: 'alloy',
         modalities: ['audio', 'text'],
         instructions: req.body?.instructions || '응급실 간호사 AI 비서입니다.',
@@ -43,7 +38,6 @@ export default async function handler(req, res) {
     return res.status(200).json(data);
 
   } catch (error) {
-    console.error('Server error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
