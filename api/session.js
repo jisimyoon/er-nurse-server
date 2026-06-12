@@ -8,24 +8,14 @@ export default async function handler(req, res) {
   if (!apiKey) return res.status(500).json({ error: 'API 키 없음' });
 
   try {
+    // client_secrets는 파라미터 없이 호출
     const response = await fetch('https://api.openai.com/v1/realtime/client_secrets', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        voice: 'alloy',
-        modalities: ['audio', 'text'],
-        instructions: req.body?.instructions || '응급실 간호사 AI 비서입니다.',
-        input_audio_transcription: { model: 'whisper-1' },
-        turn_detection: {
-          type: 'server_vad',
-          threshold: 0.5,
-          prefix_padding_ms: 300,
-          silence_duration_ms: 700,
-        },
-      }),
+      body: JSON.stringify({}),
     });
 
     if (!response.ok) {
@@ -35,6 +25,7 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
+    console.log('Token response:', JSON.stringify(data));
     return res.status(200).json(data);
 
   } catch (error) {
