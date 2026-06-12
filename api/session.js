@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   if (!apiKey) return res.status(500).json({ error: 'API 키 없음' });
 
   try {
-    const instructions = req.body?.instructions || `당신은 응급실 간호사의 AI 비서입니다.
+    const instructions = `당신은 응급실 간호사의 AI 비서입니다.
 들리는 음성을 인식하고, 아래 규칙에 따라 JSON으로만 응답하세요. 다른 텍스트 없이.
 
 카테고리: vs(활력징후), med(투약), lab(검사), order(의사오더), etc(기타)
@@ -22,6 +22,7 @@ export default async function handler(req, res) {
 응답 형식 (기록시): {"record":true,"category":"med","patient":"환자이름","summary":"내용15자이내","confidence":"high|medium|low"}
 응답 형식 (무시시): {"record":false}`;
 
+    // client_secrets는 type, model, instructions만 지원
     const response = await fetch('https://api.openai.com/v1/realtime/client_secrets', {
       method: 'POST',
       headers: {
@@ -33,13 +34,6 @@ export default async function handler(req, res) {
           type: 'realtime',
           model: 'gpt-realtime-2',
           instructions,
-          input_audio_transcription: { model: 'gpt-4o-transcribe' },
-          turn_detection: {
-            type: 'server_vad',
-            threshold: 0.5,
-            prefix_padding_ms: 300,
-            silence_duration_ms: 700,
-          },
         }
       }),
     });
